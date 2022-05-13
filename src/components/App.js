@@ -11,16 +11,29 @@ function App() {
     authService.onAuthStateChanged((user)=> {
       if(user){
         setIsLoggedIn(true)
-        setUserObj(user)
+        setUserObj({
+          displayName:user.displayName,
+          uid:user.uid,
+          updateProfile:(args)=> user.updateProfile(args)
+        })
       } else{
         setIsLoggedIn(false)
       }
       setInit(true)
     })
   }, [])
+  const refreshUser=()=>{
+    const user=authService.currentUser
+    setUserObj({ // user에서 값을 세분화 시켜서 분리해서 사용
+      displayName:user.displayName,
+      uid:user.uid,
+      updateProfile:(args)=> user.updateProfile(args)
+    })
+    console.log(authService.currentUser)
+  }
   return (
     <>
-      {init ? <Router isLoggedIn={isLoggedIn} userObj={userObj}/> : "Initialzing..."}
+      {init ? <Router refreshUser={refreshUser} isLoggedIn={isLoggedIn} userObj={userObj}/> : "Initialzing..."}
       <footer>
         &copy; {new Date().getFullYear()} Nwitter. All Right Reserved.
       </footer>
